@@ -39,9 +39,7 @@ impl<'a> Decompressor<'a> {
             #[cfg(feature = "lz4")]
             Format::Lz4 => Self::new(lz4_flex::frame::FrameDecoder::new(prefixed), format),
             #[cfg(feature = "zstd")]
-            Format::Zstd => {
-                Self::new(zstd::Decoder::new(prefixed)?, format)
-            }
+            Format::Zstd => Self::new(zstd::Decoder::new(prefixed)?, format),
             #[cfg(feature = "zlib")]
             Format::Zlib => Self::new(flate2::read::ZlibDecoder::new(prefixed), format),
             #[cfg(feature = "gzip")]

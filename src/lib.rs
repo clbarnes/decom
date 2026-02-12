@@ -67,7 +67,7 @@ pub mod test_utils {
         let unsupported = vec![
             #[cfg(not(feature = "lz4"))]
             LZ4,
-            #[cfg(not( feature = "zstd"))]
+            #[cfg(not(feature = "zstd"))]
             ZSTD,
             #[cfg(not(feature = "zlib-rs"))]
             ZLIB,
