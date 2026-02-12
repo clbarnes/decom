@@ -1,3 +1,4 @@
+#![doc = include_str!("../README.md")]
 mod error;
 pub use error::{Error, Result};
 pub mod io;

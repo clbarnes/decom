@@ -4,6 +4,29 @@ Rust crate for **decom**pressing streams with an automatically-selected codec.
 
 Compressing data is out of scope.
 
+```rust
+use std::io::Read;
+use decom::io::Decompressor;
+
+// anything readable; a file, an HTTP response etc.
+let compressed = std::io::Cursor::new([
+    0x04, 0x22, 0x4d, 0x18, 0x64, 0x40, 0xa7, 0x0e,
+    0x00, 0x00, 0x80, 0x48, 0x65, 0x6c, 0x6c, 0x6f,
+    0x2c, 0x20, 0x77, 0x6f, 0x72, 0x6c, 0x64, 0x21,
+    0x0a, 0x00, 0x00, 0x00, 0x00, 0xa5, 0x1f, 0x28,
+    0xd3,
+]);
+
+// LZ4 compression is detected from the first few bytes
+let mut decomp = Decompressor::try_new(compressed).unwrap();
+
+// Read the uncompressed data
+let mut out = String::default();
+decomp.read_to_string(&mut out).unwrap();
+
+assert_eq!(out, "Hello, world!\n")
+```
+
 ## Codec support
 
 | codec | feature | notes |

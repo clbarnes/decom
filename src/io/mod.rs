@@ -1,3 +1,4 @@
+//! Decompression using [std::io::Read]
 use crate::Format;
 use std::io::{Cursor, Read};
 
