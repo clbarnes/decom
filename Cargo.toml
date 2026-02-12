@@ -3,6 +3,11 @@ name = "decom"
 version = "0.1.0"
 edition = "2024"
 rust-version = "1.85.0"
+description = "Decompress streams with codec defined by the stream itself"
+repository = "https://github.com/clbarnes/decom"
+license = "MIT"
+keywords = ["decompression", "io", "read", "magic"]
+categories = ["compression"]
 
 [dependencies]
 flate2 = { version = "1.1.9", default-features = false, optional = true }
