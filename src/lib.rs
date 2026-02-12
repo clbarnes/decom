@@ -2,6 +2,13 @@ mod error;
 pub use error::{Error, Result};
 pub mod io;
 
+#[cfg(any(feature = "zlib", feature="gzip"))]
+pub use flate2;
+#[cfg(feature = "lz4")]
+pub use lz4_flex;
+#[cfg(feature = "zstd")]
+pub use zstd;
+
 /// Supported compression formats.
 ///
 /// Use the [TryFrom] implementation to recognise the format from the first 4 bytes of a compressed stream.
@@ -59,9 +66,9 @@ pub mod test_utils {
             LZ4,
             #[cfg(feature = "zstd")]
             ZSTD,
-            #[cfg(feature = "zlib-rs")]
+            #[cfg(feature = "zlib")]
             ZLIB,
-            #[cfg(feature = "zlib-rs")]
+            #[cfg(feature = "gzip")]
             GZIP,
         ];
         let unsupported = vec![
@@ -69,9 +76,9 @@ pub mod test_utils {
             LZ4,
             #[cfg(not(feature = "zstd"))]
             ZSTD,
-            #[cfg(not(feature = "zlib-rs"))]
+            #[cfg(not(feature = "zlib"))]
             ZLIB,
-            #[cfg(not(feature = "zlib-rs"))]
+            #[cfg(not(feature = "gzip"))]
             GZIP,
         ];
         (RAW, supported, unsupported)
