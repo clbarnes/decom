@@ -13,12 +13,11 @@ thiserror = "2.0.18"
 zstd = { version = "0.13.3", optional = true }
 
 [features]
-default = ["lz4", "zstd-bound", "zlib", "gzip"]
+default = ["lz4", "zstd", "zlib", "gzip"]
 
 lz4 = ["dep:lz4_flex"]
-zstd-rust = ["dep:ruzstd"]
-zstd-bound = ["dep:zstd"]
-zstd-wasm = ["zstd-bound", "zstd/wasm"]
+zstd = ["dep:zstd"]
+zstd-wasm = ["zstd", "zstd/wasm"]
 zlib-rs = ["flate2/zlib-rs"]
 zlib = ["zlib-rs"]
 gzip = ["zlib-rs"]

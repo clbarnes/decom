@@ -2,12 +2,15 @@ mod error;
 pub use error::{Error, Result};
 pub mod io;
 
+/// Supported compression formats.
+///
+/// Use the [TryFrom] implementation to recognise the format from the first 4 bytes of a compressed stream.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 #[non_exhaustive]
 pub enum Format {
     #[cfg(feature = "lz4")]
     Lz4,
-    #[cfg(any(feature = "zstd-rust", feature = "zstd-bound"))]
+    #[cfg(feature = "zstd")]
     Zstd,
     #[cfg(feature = "zlib")]
     Zlib,
@@ -22,7 +25,7 @@ impl TryFrom<&[u8; 4]> for Format {
         match value {
             #[cfg(feature = "lz4")]
             [0x04, 0x22, 0x4D, 0x18] => Ok(Self::Lz4),
-            #[cfg(any(feature = "zstd-rust", feature = "zstd-bound"))]
+            #[cfg(feature = "zstd")]
             [0x28, 0xB5, 0x2F, 0xFD] => Ok(Self::Zstd),
             #[cfg(feature = "zlib")]
             [0x78, 0x01, _, _]
@@ -54,7 +57,7 @@ pub mod test_utils {
         let supported = vec![
             #[cfg(feature = "lz4")]
             LZ4,
-            #[cfg(any(feature = "zstd-rust", feature = "zstd-bound"))]
+            #[cfg(feature = "zstd")]
             ZSTD,
             #[cfg(feature = "zlib-rs")]
             ZLIB,
@@ -64,7 +67,7 @@ pub mod test_utils {
         let unsupported = vec![
             #[cfg(not(feature = "lz4"))]
             LZ4,
-            #[cfg(not(any(feature = "zstd-rust", feature = "zstd-bound")))]
+            #[cfg(not( feature = "zstd"))]
             ZSTD,
             #[cfg(not(feature = "zlib-rs"))]
             ZLIB,

@@ -1,6 +1,7 @@
 use crate::Format;
 use std::io::{Cursor, Read};
 
+/// Decompressor which abstracts over multiple compression formats.
 pub struct Decompressor<'a> {
     reader: Box<dyn Read + 'a>,
     format: Format,
@@ -22,10 +23,13 @@ impl<'a> Decompressor<'a> {
         }
     }
 
+    /// The format used by the decompressor.
     pub fn format(&self) -> Format {
         self.format
     }
 
+    /// Create a new decompressor from a [Read]er.
+    /// The format is automatically detected from the first few bytes of the stream.
     pub fn try_new<R: Read + 'a>(mut reader: R) -> crate::Result<Self> {
         let mut magic = [0u8; 4];
         let nbytes = reader.read(&mut magic)?;
@@ -34,16 +38,9 @@ impl<'a> Decompressor<'a> {
         let out = match format {
             #[cfg(feature = "lz4")]
             Format::Lz4 => Self::new(lz4_flex::frame::FrameDecoder::new(prefixed), format),
-            #[cfg(any(feature = "zstd-rust", feature = "zstd-bound"))]
+            #[cfg(feature = "zstd")]
             Format::Zstd => {
-                #[cfg(feature = "zstd-bound")]
-                {
-                    Self::new(zstd::Decoder::new(prefixed)?, format)
-                }
-                #[cfg(all(not(feature = "zstd-bound"), feature = "zstd-rust"))]
-                {
-                    Self::new(ruzstd::Decoder::new(prefixed)?, format)
-                }
+                Self::new(zstd::Decoder::new(prefixed)?, format)
             }
             #[cfg(feature = "zlib")]
             Format::Zlib => Self::new(flate2::read::ZlibDecoder::new(prefixed), format),
@@ -84,7 +81,7 @@ mod tests {
         check_read(LZ4);
     }
 
-    #[cfg(any(feature = "zstd-rust", feature = "zstd-bound"))]
+    #[cfg(feature = "zstd")]
     #[test]
     fn test_zstd() {
         check_read(ZSTD);

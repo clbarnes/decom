@@ -1,5 +1,6 @@
 use thiserror::Error;
 
+/// Error type for the `decom` crate.
 #[derive(Debug, Error)]
 pub enum Error {
     #[error("{0}")]
@@ -17,4 +18,5 @@ impl Error {
     }
 }
 
+/// Default result type for the `decom` crate.
 pub type Result<T> = std::result::Result<T, Error>;
