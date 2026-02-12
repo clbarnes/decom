@@ -2,7 +2,7 @@ mod error;
 pub use error::{Error, Result};
 pub mod io;
 
-#[cfg(any(feature = "zlib", feature="gzip"))]
+#[cfg(any(feature = "zlib", feature = "gzip"))]
 pub use flate2;
 #[cfg(feature = "lz4")]
 pub use lz4_flex;
