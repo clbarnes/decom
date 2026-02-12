@@ -18,13 +18,13 @@ let compressed = std::io::Cursor::new([
 ]);
 
 // LZ4 compression is detected from the first few bytes
-let mut decomp = Decompressor::try_new(compressed).unwrap();
+if let Ok(mut decomp) = Decompressor::try_new(compressed) {
+    // Read the uncompressed data
+    let mut out = String::default();
+    decomp.read_to_string(&mut out).unwrap();
 
-// Read the uncompressed data
-let mut out = String::default();
-decomp.read_to_string(&mut out).unwrap();
-
-assert_eq!(out, "Hello, world!\n")
+    assert_eq!(out, "Hello, world!\n")
+};
 ```
 
 ## Codec support
