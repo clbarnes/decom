@@ -17,6 +17,15 @@ impl std::fmt::Debug for Decompressor<'_> {
 }
 
 impl<'a> Decompressor<'a> {
+    /// A "decompressor" which reads raw (uncompressed) data.
+    /// Useful for unifying APIs.
+    pub fn new_raw<R: Read + 'a>(reader: R) -> Self {
+        Decompressor {
+            reader: Box::new(reader),
+            format: Format::Raw,
+        }
+    }
+
     fn new<R: Read + 'a>(reader: R, format: Format) -> Self {
         Decompressor {
             reader: Box::new(reader),
@@ -45,7 +54,6 @@ impl<'a> Decompressor<'a> {
             Format::Zlib => Self::new(flate2::read::ZlibDecoder::new(prefixed), format),
             #[cfg(feature = "gzip")]
             Format::Gzip => Self::new(flate2::read::GzDecoder::new(prefixed), format),
-            #[allow(unreachable_patterns)]
             _ => {
                 return Err(crate::Error::UnsupportedFormat {
                     magic_bytes: magic.to_vec(),
@@ -69,6 +77,14 @@ mod tests {
 
     fn check_read<R: Read>(reader: R) {
         let mut d = Decompressor::try_new(reader).unwrap();
+        let mut out = Vec::new();
+        d.read_to_end(&mut out).unwrap();
+        assert_eq!(out, RAW);
+    }
+
+    #[test]
+    fn test_raw() {
+        let mut d = Decompressor::new_raw(RAW);
         let mut out = Vec::new();
         d.read_to_end(&mut out).unwrap();
         assert_eq!(out, RAW);

@@ -16,6 +16,7 @@ pub use zstd;
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 #[non_exhaustive]
 pub enum Format {
+    Raw,
     #[cfg(feature = "lz4")]
     Lz4,
     #[cfg(feature = "zstd")]
